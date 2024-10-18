@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Name Extractor</title>
+</head>
+<body>
+    <h1>Product Name Extractor</h1>
+    <form id="urlForm">
+        <label for="url">Enter URL:</label>
+        <input type="text" id="url" name="url" required>
+        <button type="submit">Extract Products</button>
+    </form>
+    <div id="result"></div>
+
+    <script>
+        document.getElementById('urlForm').onsubmit = async function (event) {
+            event.preventDefault();  // Предотвратить отправку формы по умолчанию
+            const url = document.getElementById('url').value;
+            const response = await fetch('/extract', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ url: url })
+            });
+            const result = await response.json();
+            const resultDiv = document.getElementById('result');
+            if (response.ok) {
+                resultDiv.innerHTML = '<h2>Extracted Products:</h2><ul>' + result.products.map(product => `<li>${product}</li>`).join('') + '</ul>';
+            } else {
+                resultDiv.innerHTML = `<p>Error: ${result.error}</p>`;
+            }
+        };
+    </script>
+</body>
+</html>
